@@ -5,3 +5,4 @@ flatten_reddit_json
 *.iml
 *.json
 *.swp
+/out

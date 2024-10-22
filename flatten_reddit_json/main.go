@@ -67,7 +67,7 @@ func writer(in <-chan []string, outDir string, wg *sync.WaitGroup) {
 	writer := csv.NewWriter(commentFile)
 	defer writer.Flush()
 
-	header := []string{"author", "body", "subreddit", "created_utc", "author_created_utc", "permalink", "subreddit_type", "lang"}
+	header := []string{"author", "body", "subreddit", "year", "month", "day", "clock", "created_utc", "author_created_utc", "permalink", "subreddit_type", "lang", "id", "parent_id", "link_id"}
 	writer.Write(header)
 
 	for object := range in {

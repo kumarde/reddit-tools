@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/teamnsrg/go-perspectiveapi/perspective"
 	"strconv"
+  "time"
 )
 
 /*
@@ -68,9 +69,8 @@ type RedditComment struct {
 	Subreddit        string `json:"subreddit"`
 	SubredditType    string `json:"subreddit_type"`
 	Id               string `json:"id"`
-	ParentId         string
-	NestLevel        int64
-	LinkId           string
+	ParentId         string `json:"parent_id"`
+	LinkId           string `json:"link_id"`
 }
 
 type CommentWithToxicity struct {
@@ -120,14 +120,26 @@ func (cwt *RedditComment) buildOutput(lang string) []string {
 	out = append(out, cwt.Body)
 	out = append(out, cwt.Subreddit)
 
-	createdStr := strconv.FormatUint(cwt.CreatedUTC, 10)
+  tm := time.Unix(int64(cwt.CreatedUTC), 0)
+
+	out = append(out, strconv.FormatInt(int64(tm.Year()), 10))
+  out = append(out, strconv.FormatInt(int64(tm.Month()), 10))
+  out = append(out, strconv.FormatInt(int64(tm.Day()), 10))
+  out = append(out, tm.Format("15:04:05"))
+
+  user_tm := time.Unix(int64(cwt.CreatedUTC), 0)
+
+  createdStr := strconv.FormatUint(cwt.CreatedUTC, 10)
 	userCreatedStr := strconv.FormatUint(cwt.AuthorCreatedUTC, 10)
 
-	out = append(out, createdStr)
+  out = append(out, createdStr)
 	out = append(out, userCreatedStr)
 	out = append(out, cwt.Permalink)
 	out = append(out, cwt.SubredditType)
 	out = append(out, lang)
+  out = append(out, cwt.Id)
+  out = append(out, cwt.ParentId)
+  out = append(out, cwt.LinkId)
 
 	return out
 }
