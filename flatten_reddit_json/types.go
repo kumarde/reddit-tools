@@ -127,10 +127,21 @@ func (cwt *RedditComment) buildOutput(lang string) []string {
   out = append(out, strconv.FormatInt(int64(tm.Day()), 10))
   out = append(out, tm.Format("15:04:05"))
 
-  user_tm := time.Unix(int64(cwt.CreatedUTC), 0)
-
   createdStr := strconv.FormatUint(cwt.CreatedUTC, 10)
 	userCreatedStr := strconv.FormatUint(cwt.AuthorCreatedUTC, 10)
+
+  if userCreatedStr == "0" {
+    out = append(out, "")
+    out = append(out, "")
+    out = append(out, "")
+    out = append(out, "")
+  } else {
+    user_tm := time.Unix(int64(cwt.CreatedUTC), 0)
+    out = append(out, strconv.FormatInt(int64(user_tm.Year()), 10))
+    out = append(out, strconv.FormatInt(int64(user_tm.Month()), 10))
+    out = append(out, strconv.FormatInt(int64(user_tm.Day()), 10))
+    out = append(out, user_tm.Format("15:04:05"))
+  }
 
   out = append(out, createdStr)
 	out = append(out, userCreatedStr)

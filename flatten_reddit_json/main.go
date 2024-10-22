@@ -61,13 +61,14 @@ func writer(in <-chan []string, outDir string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	// Open file handlers
-	commentFile := openFile(outDir + "comments.csv")
+	commentFile := openFile(outDir + ".csv")
 
 	defer commentFile.Close()
 	writer := csv.NewWriter(commentFile)
 	defer writer.Flush()
 
-	header := []string{"author", "body", "subreddit", "year", "month", "day", "clock", "created_utc", "author_created_utc", "permalink", "subreddit_type", "lang", "id", "parent_id", "link_id"}
+	header := []string{"author", "body", "subreddit", "year", "month", "day", "clock", "created_utc", "user_year", "user_month", "user_day", "user_clock",
+				"author_created_utc", "permalink", "subreddit_type", "lang", "id", "parent_id", "link_id"}
 	writer.Write(header)
 
 	for object := range in {
@@ -102,8 +103,8 @@ func reader(infile string, jsonChannel chan<- string, wg *sync.WaitGroup) {
 }
 
 func main() {
-	infile := flag.String("input", "/mnt/reddit_graph/reddit-dump/reddit/comments/2018-test.json", "JSON file containing Stream file.")
-	outDir := flag.String("outdir", "out/", "Output directory")
+	infile := flag.String("input", os.Args[1] + ".json", "JSON file containing Stream file.")
+	outDir := flag.String("outdir", os.Args[1], "Output directory")
 	flag.Parse()
 
 	jsonChannel := make(chan string, 100000)
