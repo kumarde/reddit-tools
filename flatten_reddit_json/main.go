@@ -15,17 +15,21 @@ import (
 var atomicCounter = NewCounter()
 
 func processComment(jsonChannel chan string, outputObjectChannel chan []string, wg *sync.WaitGroup,
-					mutex *sync.Mutex, id map[string]bool) {
+	mutex *sync.Mutex, id map[string]bool) {
 	defer wg.Done()
 
 	for jsonBlob := range jsonChannel {
 		cwt := RedditComment{}
 		json.Unmarshal([]byte(jsonBlob), &cwt)
 		body := cwt.Body
-		
+
 		// clean deleted or removed content
-		if body == "[deleted]" { continue }
-		if body == "[removed]" { continue }
+		if body == "[deleted]" {
+			continue
+		}
+		if body == "[removed]" {
+			continue
+		}
 
 		//check for duplicate
 		mutex.Lock()
@@ -63,7 +67,7 @@ func writer(in <-chan []string, outDir string, wg *sync.WaitGroup) {
 	writer := csv.NewWriter(commentFile)
 	defer writer.Flush()
 
-	header := []string{"author", "body", "subreddit", "created_utc", "author_created_utc", "permalink", "subreddit_type", "permalink2", "subreddit_type2", "lang", "attack_on_author", "identity_attack", "insult", "profanity", "severe_toxicity", "sexually_explicit", "threat", "toxicity"}
+	header := []string{"author", "body", "subreddit", "created_utc", "author_created_utc", "permalink", "subreddit_type", "lang"}
 	writer.Write(header)
 
 	for object := range in {

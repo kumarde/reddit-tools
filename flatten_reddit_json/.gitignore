@@ -3,11 +3,5 @@ classify_reddit_dump
 flatten_reddit_json
 *.idea
 *.iml
-reddit_parse
 *.json
-secret.go
-out/
-10k_results/
-gamergate/
-1119/
-1119_deleted/
+*.swp

@@ -59,22 +59,22 @@ import (
 // identity_attack,insult,profanity,severe_toxicity,sexually_explicity,threat,toxicity
 
 type RedditComment struct {
-	Archived         bool    `json:"archived"`
-	Author           string  `json:"author"`
+	Archived         bool   `json:"archived"`
+	Author           string `json:"author"`
 	AuthorCreatedUTC uint64 `json:"author_created_utc"`
-	Body             string  `json:"body"`
+	Body             string `json:"body"`
 	CreatedUTC       uint64 `json:"created_utc"`
-	Permalink        string  `json:"permalink"`
-	Subreddit        string  `json:"subreddit"`
-	SubredditType    string  `json:"subreddit_type"`
-	Id               string  `json:"id"`
+	Permalink        string `json:"permalink"`
+	Subreddit        string `json:"subreddit"`
+	SubredditType    string `json:"subreddit_type"`
+	Id               string `json:"id"`
 	ParentId         string
 	NestLevel        int64
 	LinkId           string
 }
 
 type CommentWithToxicity struct {
-	Comment  *RedditComment                      `json:"comment"`
+	Comment *RedditComment `json:"comment"`
 	// Toxicity *perspective.AnalyzeCommentResponse `json:"toxicity"`
 }
 
