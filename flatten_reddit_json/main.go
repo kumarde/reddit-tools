@@ -14,17 +14,31 @@ import (
 
 var atomicCounter = NewCounter()
 
-func processComment(jsonChannel chan string, outputObjectChannel chan []string, wg *sync.WaitGroup) {
+func processComment(jsonChannel chan string, outputObjectChannel chan []string, wg *sync.WaitGroup,
+					mutex *sync.Mutex, id map[string]bool) {
 	defer wg.Done()
+
 	for jsonBlob := range jsonChannel {
-		cwt := CommentWithToxicity{}
+		cwt := RedditComment{}
 		json.Unmarshal([]byte(jsonBlob), &cwt)
-		body := cwt.Comment.Body
-		langInfo := whatlanggo.Detect(body)
-		langString := langInfo.Lang.String()
-		if langString != "English" {
+		body := cwt.Body
+		
+		// clean deleted or removed content
+		if body == "[deleted]" { continue }
+		if body == "[removed]" { continue }
+
+		//check for duplicate
+		mutex.Lock()
+		if id[cwt.Id] {
+			mutex.Unlock()
 			continue
 		}
+		id[cwt.Id] = true
+		mutex.Unlock()
+
+		// detect language of body
+		langInfo := whatlanggo.Detect(body)
+		langString := langInfo.Lang.String()
 		// Build Output array
 		outputObjectChannel <- cwt.buildOutput(langString)
 	}
@@ -84,12 +98,15 @@ func reader(infile string, jsonChannel chan<- string, wg *sync.WaitGroup) {
 }
 
 func main() {
-	infile := flag.String("input", "reddit.json", "JSON file containing Stream file.")
+	infile := flag.String("input", "/mnt/reddit_graph/reddit-dump/reddit/comments/2018-test.json", "JSON file containing Stream file.")
 	outDir := flag.String("outdir", "out/", "Output directory")
 	flag.Parse()
 
 	jsonChannel := make(chan string, 100000)
 	outputObjectChannel := make(chan []string, 10000)
+
+	var mutex sync.Mutex
+	var id = make(map[string]bool)
 
 	//limiter := time.Tick(100 * time.Millisecond)
 
@@ -102,7 +119,7 @@ func main() {
 
 	for i := 0; i < 31; i++ {
 		commentWg.Add(1)
-		go processComment(jsonChannel, outputObjectChannel, &commentWg)
+		go processComment(jsonChannel, outputObjectChannel, &commentWg, &mutex, id)
 	}
 
 	commentWg.Wait()

@@ -67,7 +67,7 @@ type RedditComment struct {
 	Permalink        string  `json:"permalink"`
 	Subreddit        string  `json:"subreddit"`
 	SubredditType    string  `json:"subreddit_type"`
-	Id               string
+	Id               string  `json:"id"`
 	ParentId         string
 	NestLevel        int64
 	LinkId           string
@@ -75,7 +75,7 @@ type RedditComment struct {
 
 type CommentWithToxicity struct {
 	Comment  *RedditComment                      `json:"comment"`
-	Toxicity *perspective.AnalyzeCommentResponse `json:"toxicity"`
+	// Toxicity *perspective.AnalyzeCommentResponse `json:"toxicity"`
 }
 
 func getToxicScoreFromAttribute(t *perspective.AnalyzeCommentResponse, attribute string) string {
@@ -87,29 +87,47 @@ func getToxicScoreFromAttribute(t *perspective.AnalyzeCommentResponse, attribute
 	return fmt.Sprintf("%f", spanScores[0].Score.Value)
 }
 
-func (cwt *CommentWithToxicity) buildOutput(lang string) []string {
-	out := []string{}
-	out = append(out, cwt.Comment.Author)
-	out = append(out, cwt.Comment.Body)
-	out = append(out, cwt.Comment.Subreddit)
+// func (cwt *CommentWithToxicity) buildOutput(lang string) []string {
+// 	out := []string{}
+// 	out = append(out, cwt.Comment.Author)
+// 	out = append(out, cwt.Comment.Body)
+// 	out = append(out, cwt.Comment.Subreddit)
 
-	createdStr := strconv.FormatUint(cwt.Comment.CreatedUTC, 10)
-	userCreatedStr := strconv.FormatUint(cwt.Comment.AuthorCreatedUTC, 10)
+// 	createdStr := strconv.FormatUint(cwt.Comment.CreatedUTC, 10)
+// 	userCreatedStr := strconv.FormatUint(cwt.Comment.AuthorCreatedUTC, 10)
+
+// 	out = append(out, createdStr)
+// 	out = append(out, userCreatedStr)
+// 	out = append(out, cwt.Comment.Permalink)
+// 	out = append(out, cwt.Comment.SubredditType)
+// 	out = append(out, lang)
+
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "ATTACK_ON_AUTHOR"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "IDENTITY_ATTACK"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "INSULT"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "PROFANITY"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "SEVERE_TOXICITY"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "SEXUALLY_EXPLICIT"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "THREAT"))
+// 	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "TOXICITY"))
+
+// 	return out
+// }
+
+func (cwt *RedditComment) buildOutput(lang string) []string {
+	out := []string{}
+	out = append(out, cwt.Author)
+	out = append(out, cwt.Body)
+	out = append(out, cwt.Subreddit)
+
+	createdStr := strconv.FormatUint(cwt.CreatedUTC, 10)
+	userCreatedStr := strconv.FormatUint(cwt.AuthorCreatedUTC, 10)
 
 	out = append(out, createdStr)
 	out = append(out, userCreatedStr)
-	out = append(out, cwt.Comment.Permalink)
-	out = append(out, cwt.Comment.SubredditType)
+	out = append(out, cwt.Permalink)
+	out = append(out, cwt.SubredditType)
 	out = append(out, lang)
-
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "ATTACK_ON_AUTHOR"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "IDENTITY_ATTACK"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "INSULT"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "PROFANITY"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "SEVERE_TOXICITY"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "SEXUALLY_EXPLICIT"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "THREAT"))
-	out = append(out, getToxicScoreFromAttribute(cwt.Toxicity, "TOXICITY"))
 
 	return out
 }
