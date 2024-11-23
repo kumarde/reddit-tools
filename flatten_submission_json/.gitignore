@@ -1,0 +1,8 @@
+classify_reddit_comments
+classify_reddit_dump
+flatten_reddit_json
+*.idea
+*.iml
+*.json
+*.swp
+/out
