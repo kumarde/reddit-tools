@@ -118,8 +118,8 @@ func (cwt *RedditComment) buildOutput(lang string) []string {
 	out := []string{}
   
   tm := time.Unix(int64(cwt.CreatedUTC), 0)
-  fmt.Println(tm)
-  fmt.Println(cwt.CreatedUTC)
+  // fmt.Println(tm)
+  // fmt.Println(cwt.CreatedUTC)
 	out = append(out, strconv.FormatInt(int64(tm.Year()), 10))
   out = append(out, strconv.FormatInt(int64(tm.Month()), 10))
   out = append(out, strconv.FormatInt(int64(tm.Day()), 10))
